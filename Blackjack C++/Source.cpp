@@ -17,6 +17,21 @@ extern "C" void hitLoop(int d, int p, char i) {
 		cout << "please enter a valid value";
 	}*/
 }
+extern "C" void playGame(char i) {
+	do {
+		cout << "Would you like to play BlackJack? Press Y to start playing or N to exit: ";
+		cin >> i;
+		if (i == 'y' || i == 'Y') {
+			//Something to start the game
+		}
+		else if (i == 'n' || i == 'N') {
+			exit;
+		}
+		else {
+			cout << "Please enter Y to keep playing or N to exit";
+		}
+	} while (i != 'n' || i != 'N');
+}
 
 int main() {
 	asmMain();

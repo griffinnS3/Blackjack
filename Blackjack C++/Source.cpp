@@ -1,39 +1,60 @@
 #include <iostream>
+#include <cstring>  // ADD THIS - needed for strlen
 using namespace std;
+
 extern "C" void asmMain();
 
-extern "C" void hitLoop(int d, int p, char i) {
-	cout << "Current hand value: " << p;
-	cout << "Dealer hand: " << d; 
-	cout << "Hit or stand: (H or S): ";
-	cin >> i;
-	/*if (i == 'h' || i == 'H') {
-	// add something later to call assembly functions
-	}
-	else if (i == 's' || i == 'S') {
+struct Card {
+    char name[32];
+    char suit[16];
+    int value;
+};
 
-	}
-	else {
-		cout << "please enter a valid value";
-	}*/
+extern "C" {
+    extern Card deck[52];
 }
-extern "C" void playGame(char i) {
-	do {
-		cout << "Would you like to play BlackJack? Press Y to start playing or N to exit: ";
-		cin >> i;
-		if (i == 'y' || i == 'Y') {
-			//Something to start the game
-		}
-		else if (i == 'n' || i == 'N') {
-			exit;
-		}
-		else {
-			cout << "Please enter Y to keep playing or N to exit";
-		}
-	} while (i != 'n' || i != 'N');
+
+extern "C" void hitLoop(int* playerHand, int* dealerHand) {
+    char input;
+    cout << "Current hand value: " << *playerHand << endl;
+    cout << "Dealer hand: " << *dealerHand << endl;
+    cout << "Hit or stand (H or S): ";
+    cin >> input;
+
+    // You can expand this later
+}
+
+extern "C" void playGame() {
+    char input;
+    do {
+        cout << "Would you like to play BlackJack? Press Y to start or N to exit: ";
+        cin >> input;
+
+        if (input == 'y' || input == 'Y') {
+            asmMain();  // Start the game
+            break;
+        }
+        else if (input == 'n' || input == 'N') {
+            return;
+        }
+        else {
+            cout << "Please enter Y to keep playing or N to exit" << endl;
+        }
+    } while (true);
 }
 
 int main() {
-	asmMain();
-	return 0;
+    asmMain();
+
+    cout << "\nYour hand:" << endl;
+    for (int i = 0; i < 2; i++) {
+        cout << "  " << deck[i].name << " (Value: " << deck[i].value << ")" << endl;
+    }
+
+    cout << "\nDealer's hand:" << endl;
+    for (int i = 2; i < 4; i++) {
+        cout << "  " << deck[i].name << " (Value: " << deck[i].value << ")" << endl;
+    }
+
+    return 0;
 }

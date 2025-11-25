@@ -1,10 +1,12 @@
 .386
-.model flat, stdcall
+.model flat, c
 .stack 4096
 
-extern hitLoop:PROC
-extern getSeed:PROC
+EXTERN hitLoop:PROC
 
+
+PUBLIC deck
+PUBLIC asmMain
 
 .data
 playerHand DWORD ?
@@ -65,7 +67,7 @@ deck Card 52 DUP(<>)           ; 52-card deck
 
 
 .code
-FillDeck PROC
+FillDeck PROC C
     push ebp
     mov ebp, esp
     push esi
@@ -89,7 +91,7 @@ InnerLoop:
     mov eax, esi
     imul eax, 13
     add eax, edx
-    imul eax, SIZEOF card
+    imul eax, SIZEOF Card
     lea edi, deck[eax]      ;EDI points to current card
     ;--------------
     ;COPY RANK NAME
@@ -168,15 +170,15 @@ pop ebp
     ret
 FillDeck ENDP
 
-Random PROC
+Random PROC C
 push ebx 
 push edx
 
  ; Linear congruential generator: seed = (seed * 1103515245 + 12345)
-    mov eax, seed
+    mov eax, [seed]
     imul eax, 1103515245
     add eax, 12345
-    mov seed, eax           ; Update seed for next call
+    mov [seed], eax           ; Update seed for next call
     
     pop edx
     pop ebx
@@ -184,7 +186,7 @@ push edx
 Random ENDP
 
 ; Get random number in range [0, n)
-RandomRange PROC
+RandomRange PROC C
 push ebx
 push edx
 mov ebx, edx    ; save n as upper bound
@@ -198,7 +200,7 @@ ret
 RandomRange ENDP
 
 ;Shuffle Deck
-ShuffleDeck PROC
+ShuffleDeck PROC C
 push esi
 push edi
 push ecx
@@ -242,9 +244,7 @@ ret
 ShuffleDeck ENDP
 
 
-asmMain PROC
-call getSeed
-mov seed, eax
+asmMain PROC C
 call FillDeck       ; Create and fill deck with cards
 call ShuffleDeck    ; Shuffle deck 
 ;call hitLoop player dealer
